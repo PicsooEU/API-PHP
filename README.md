@@ -2,8 +2,8 @@
 
 ### This PHP example shows how to use the Picsoo API/Webservices.
 
-Demo version is available at [DEMO](http://picsoocloud.com/picsooapidemo/). \
-Documentation is available at [One Content Column DEMO](http://picsoocloud.com/picsooapidoc/). 
+Demo version is available at [PICSOO API DEMO](http://picsoocloud.com/picsooapidemo/). \
+Documentation is available at [PICSOO API DOCUMENTATION](http://picsoocloud.com/picsooapidoc/). 
 
 ## Current version : 0.01
 
