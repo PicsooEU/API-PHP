@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Picsoo API Demo Platform (staging)</title>
+    <title>Picsoo API Demo Platform (staging) v0.01</title>
     <style>
         /* Styling for the sections and line separator */
         .section {
@@ -19,6 +19,11 @@
             color: blue;
             font-weight: bold;
         }
+        h2 {
+            color: #55ff00ff;
+            font-weight: normal;
+			font-size: small;
+        }
 
         /* Styling for the second section */
         .textbox-container {
@@ -29,8 +34,14 @@
         label[for="email"],
         label[for="password"],
         label[for="clientid"],
-        label[for="name"],
-        label[for="firstname"] {
+
+        label[for="companyname"],
+		label[for="name"],
+        label[for="firstname"],
+		label[for="vat"],
+
+		label[for="accountcode"],
+		label[for="accountname"] {
             color: black;
         }
         label[for="bbbb"] {
@@ -46,7 +57,8 @@
         label[for="GetCompaniesListByEmail"],
         label[for="GetCompanyInfo"],
         label[for="ClearAllDataForGivenCompany"],
-        label[for="SaveCustomer"] {
+        label[for="SaveCustomer"],
+		label[for="SaveChartOfAccount"] {
             color: blue;
         }
         label[for="radio4"] {
@@ -71,11 +83,13 @@
     <form id="myForm">
 		<!-- TITLE ------------------------------------------------------------------------------------------------------------------------------------- -->
         <div class="section">
-            <h1>Picsoo API Demo Platform (staging)</h1>
+            <h1>Picsoo API Demo Platform (staging) v0.01</h1>
         </div>
 
-		<!-- GROUP #1 CREDENTIALS ---------------------------------------------------------------------------------------------------------------------- -->
+		<!-- GROUP #1 INPUT TEXT BOXES ----------------------------------------------------------------------------------------------------------------- -->
         <div class="section">
+			<!-- general ---->
+			<h2>General :</h2>
             <div class="textbox-container">
                 <div>
                     <label for="email">Email:</label>
@@ -93,13 +107,37 @@
                     <label for="bbbb">Not used:</label>
                     <input type="text" id="bbbb" name="bbbb" placeholder="Leave empty">
                 </div>
+			</div>
+			<!-- customers ---->
+			<h2>Customers :</h2>
+            <div class="textbox-container">
+                <div>
+                    <label for="companyname">Company name:</label>
+                    <input type="text" id="companyname" name="companyname" value="TruckCo" placeholder="company name">
+                </div>
                 <div>
                     <label for="name">Customer name:</label>
-                    <input type="text" id="name" name="name" placeholder="A name">
+                    <input type="text" id="name" name="name" value="McNee" placeholder="A name">
                 </div>
                 <div>
                     <label for="firstname">Customer firstname:</label>
-                    <input type="text" id="firstname" name="firstname" placeholder="A firstname">
+                    <input type="text" id="firstname" name="firstname" value="Patrick" placeholder="A firstname">
+                </div>
+                <div>
+                    <label for="vat">VAT:</label>
+                    <input type="text" id="vat" name="vat" value="666217180" placeholder="An european VAT">
+                </div>
+            </div>
+			<!-- chart of account ---->
+			<h2>Chart of account :</h2>
+            <div class="textbox-container">
+                <div>
+                    <label for="accountcode">Account code:</label>
+                    <input type="text" id="accountcode" name="accountcode" value="711111" placeholder="account code">
+                </div>
+                <div>
+                    <label for="accountname">Account name:</label>
+                    <input type="text" id="accountname" name="accountname" value="Ventes X" placeholder="account name">
                 </div>
             </div>
         </div>
@@ -121,26 +159,33 @@
                 </div>
                 <div class="radio-label">
                     <input type="radio" name="radioGroup" value="SaveCustomer" onclick="handleRadioSelection(this)">
-                    <label for="SaveCustomer">SaveCustomer</label>
+                    <label for="SaveCustomer">SaveCustomer (-Supplier)</label>
                 </div>
                 <div class="radio-label">
-                    <input type="radio" name="radioGroup" value="radio4" onclick="handleRadioSelection(this)">
-                    <label for="radio4">Radio 4</label>
+                    <input type="radio" name="radioGroup" value="SaveChartOfAccount" onclick="handleRadioSelection(this)">
+                    <label for="SaveCustomer">SaveChartOfAccount</label>
+                </div>
+                <div class="radio-label">
+                    <input type="radio" name="radioGroup" value="Not used" onclick="handleRadioSelection(this)">
+                    <label for="radio4">Not used</label>
                 </div>
             </div>
         </div>
 
 		<!-- GROUP # FONCTIONS & BUTTONS --------------------------------------------------------------------------------------------------------------- -->
         <div class="section">
-            <a href="http://www.picsoo.eu">picsoo.eu</a>
-			<br><br>
-            <a href="https://stagingbe.mindoo.co/">staging</a>
-			<br><br>
-            <a href="http://picsoocloud.com/picsooapidoc/">api documentation</a>
-			<br><br>
             <button id="okButton" type="button" onclick="handleOKButtonClick()">EXECUTE SELECTED API</button>
             &nbsp;&nbsp;
 			<button type="button" onclick="handleCancelButtonClick()">CANCEL</button>
+			<br><br>
+            <a href="http://www.picsoo.eu">picsoo.eu</a>
+			&nbsp;&nbsp;
+            <a href="https://stagingbe.mindoo.co/">staging</a>
+			&nbsp;&nbsp;
+            <a href="http://picsoocloud.com/picsooapidoc/">api documentation</a>
+			&nbsp;&nbsp;
+            <a href="https://github.com/PicsooEU/API-PHP/">GitHub repositionary</a>
+			&nbsp;&nbsp;
         </div>
     </form>
 
@@ -158,8 +203,14 @@
             var emailValue = document.getElementById("email").value;
             var passwordValue = document.getElementById("password").value;
             var clientidValue = document.getElementById("clientid").value;
-            var customernameValue = document.getElementById("name").value;
+            
+			var companynameValue = document.getElementById("companyname").value;
+			var customernameValue = document.getElementById("name").value;
             var customerfirstnameValue = document.getElementById("firstname").value;
+            var customervatValue = document.getElementById("vat").value;
+
+			var accountcodeValue = document.getElementById("accountcode").value;
+			var accountnameValue = document.getElementById("accountname").value;
 			//alert("handleOKButtonClick()");
 
             // Send the values to the server using AJAX
@@ -171,8 +222,14 @@
                     email: emailValue,
                     password: passwordValue,
 					clientid: clientidValue,
+
+					companyname: companynameValue,
 					customername: customernameValue,
-					customerfirstname: customerfirstnameValue
+					customerfirstname: customerfirstnameValue,
+					customervat: customervatValue,
+
+					accountcode: accountcodeValue,
+					accountname: accountnameValue
                 },
 				dataType: "json", // Expect JSON response
                 success: function(response) {

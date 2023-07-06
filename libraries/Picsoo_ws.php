@@ -1103,38 +1103,57 @@ class Picsoo_ws
 	// ----------------------------------------------------------------------------------------------------------------------
 	//
 	// ----------------------------------------------------------------------------------------------------------------------
-	public function SaveCustomers( $clientid = '', $customerslist = '', $customerstype = '' )
+	public function SaveChartOfAccount( $clientid = '', $accountdata = '' )
     {
-        if( $clientid == '' || $customerslist == '' || $customerstype == '' || $this->AuthenticationCode == '' )
+        if( $clientid == '' || $accountdata == '' || $this->AuthenticationCode == '' )
             return '';
 
-		$this->AuthenticationCode = $this->GetAuthentificationCode();
-        $customerslist += [ 'AuthenticationCode' => $this->AuthenticationCode ];
-        
-        if( $customerstype == 'C' )
-            $url = $this->URL_SaveCustomer;
-        else
-            $url = $this->URL_SaveSupplier;
+        $accountdata += [ 'AuthenticationCode' => $this->AuthenticationCode ];
+        $accountdata += [ 'ClientId' => $clientid ];
+
+		$url = $this->URL_SaveChartOfAccount;
             
-        $json_data = json_encode($customerslist, true);
-        
-        // Declare an array 
-        //$value = array(
-        //    "name"=>"GFG",
-        //    "email"=>"abc@gfg.com");
-        // Use json_encode() function
-        //$json = json_encode($value);
+        $json_data = json_encode($accountdata, true);
         
 		if ( $this->DUMP_DBG )
 		{
 			$myfile = fopen("json_customers_log.txt", "w") or die("Unable to open file!");
 			fwrite($myfile, $json_data);
 			fclose($myfile);
-			//file_put_contents('dbg.txt', date("h:i:s") . " - " . $json_data ."\n", FILE_APPEND);
 		}
         
         $json = $this->file_post_contents( $url, $json_data );
-        //$json = file_get_contents($url, false, $json_data);
+        $json_data = json_decode($json, true);
+        
+        return $json_data;
+    }    
+
+	// ----------------------------------------------------------------------------------------------------------------------
+	//
+	// ----------------------------------------------------------------------------------------------------------------------
+	public function SaveCustomers( $clientid = '', $customerdata = '', $customerstype = '' )
+    {
+        if( $clientid == '' || $customerdata == '' || $customerstype == '' || $this->AuthenticationCode == '' )
+            return '';
+
+        $customerdata += [ 'AuthenticationCode' => $this->AuthenticationCode ];
+        $customerdata += [ 'ClientId' => $clientid ];
+
+        if( $customerstype == 'C' )
+            $url = $this->URL_SaveCustomer;
+        else
+            $url = $this->URL_SaveSupplier;
+            
+        $json_data = json_encode($customerdata, true);
+        
+		if ( $this->DUMP_DBG )
+		{
+			$myfile = fopen("json_customers_log.txt", "w") or die("Unable to open file!");
+			fwrite($myfile, $json_data);
+			fclose($myfile);
+		}
+        
+        $json = $this->file_post_contents( $url, $json_data );
         $json_data = json_decode($json, true);
         
         return $json_data;
