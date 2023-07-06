@@ -16,5 +16,5 @@ Documentation is available at [PICSOO API DOCUMENTATION](http://picsoocloud.com/
 
 ## Credits & copyright
 
-* (c) Picsoo.eu 2023
+* (c) [Picsoo](http://www.picsoo.eu/).
 
