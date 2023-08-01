@@ -2,6 +2,8 @@
 define('BASEPATH', __DIR__);
 include_once 'libraries/Picsoo_ws.php';
 $picsoo_ws = new Picsoo_ws();
+$myList = array();
+$uniqueValue = strtoupper(uniqid());
 
 // Increment or decrement values based on the selected radio button
 if ($_SERVER['REQUEST_METHOD'] === 'POST') 
@@ -20,6 +22,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST')
  	$accountcode = $_POST['accountcode'];
  	$accountname = $_POST['accountname'];
 
+ 	$journalcode = $_POST['journalcode'];
+ 	$journalname = $_POST['journalname'];
+
+ 	$itemcode = $_POST['itemcode'];
+ 	$itemname = $_POST['itemname'];
+
 	$picsoo_ws->SetUsernamePsw( $email, $password );
 	if( $picsoo_ws->CheckPicsooAccess()== false )
 	{
@@ -28,17 +36,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST')
         	'message' => 'Echec',
 			'option' => 'alert',
         	'data' => "Can't access Picsoo ! (email ? password ? authenticationcode ?)"
-    );
+    	);
 
-    // Send the response back to the client
-    echo json_encode($response);
-    exit; // End the script execution
+    	// Send the response back to the client
+    	echo json_encode($response);
+    	exit; // End the script execution
 	}
 
     if (isset($_POST['selectedRadio'])) {
         $selectedRadio = $_POST['selectedRadio'];
 		switch( $selectedRadio )
 		{
+			case "GetAuthentificationCode":
+				GetAuthentificationCode();
+				break;
 			case "GetCompaniesListByEmail":
 	            GetCompaniesListByEmail();
 				break;
@@ -48,14 +59,474 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST')
 			case "ClearAllDataForGivenCompany":
 				ClearAllDataForGivenCompany();
 				break;
-			case "SaveCustomer":
-				SaveCustomer();
+			case "SaveCustomerSupplier":
+				SaveCustomerSupplier();
 				break;
 			case "SaveChartOfAccount":
 				SaveChartOfAccount();
 				break;
+			case "SaveJournalCode":
+				SaveJournalCode();
+				break;
+			case "SaveItem":
+				SaveItem();
+				break;
+			case "SaveTransaction":
+				SaveTransaction();
+				break;
+			case "GeTClientsByAccountant":
+				GeTClientsByAccountant();
+				break;
+			default:
+	    		// Prepare the response as JSON
+    			$response = array(
+        			'message' => 'Echec',
+					'option' => 'alert',
+        			'data' => "Undefined function !"
+        			);
+			    // Send the response back to the client
+    			echo json_encode($response);
+    			exit; // End the script execution
 		}
     }
+}
+
+function GetAuthentificationCode()
+{
+	
+	
+}
+
+function GeTClientsByAccountant()
+{
+	global $email, $picsoo_ws;
+
+	$ret = $picsoo_ws->GeTClientsByAccountant( $email );
+
+	echoresponse($ret);
+}
+
+function SaveTransaction()
+{
+	global $clientid, $picsoo_ws, $myList;
+
+	//unset ($myList);
+	$myList = array();
+
+    CreateTransactionL1(); // client
+    CreateTransactionL2(); // contrepartie
+    CreateTransactionL3(); // tva
+
+	//$ret = $picsoo_ws->SaveTransactionsDetails($clientid, $myList);
+
+	file_put_contents('output.txt', print_r($ret, true));
+
+	echoresponse($ret);
+}
+
+// Client
+function CreateTransactionL1()
+{
+	global $clientid, $picsoo_ws, $myList, $uniqueValue;
+
+    //AuthenticationCode = GlobalVar.AuthenticationCode;
+    //ClientsId = "11135";
+
+	$datatosend = [
+		'AuthenticationCode' => $picsoo_ws->CurrentAuthentificationCode(),
+		'ClientsId' => $clientid,
+	    'AaccountNameId' => '',
+	    'AccountCode' => '400TRUCKCO',
+	    'AccountGridType' => '',
+	    'AccountGridType2   ' => '',
+	    'AccountName' => '',
+	    'Amount' => '121',
+	    'AmountCurrency' => '0',
+	    'Analyt' => 'ANALYT',
+	    'BackupId' => '',
+	    'BankDescription' => '',
+	    'BankRef' => '',
+	    'BillSerivesGoodsId ' => '',
+	    'CreatedBy  ' => '',
+	    'CreatedByName' => 'PICSOO API',
+	    'CreatedDate' => '',
+	    'Currency' => '',
+	    'CurrencyRate' => '0',
+	    'CustomerCode' => '',
+	    'CustomersId' => '',
+	    'DebitCreditType' => 'Debit',
+	    'Description' => 'Truck & Co',
+	    'Discount' => '',
+	    'DueDate' => '25/07/2023 00:00:00',
+	    'Employee' => '',
+	    'EntityName' => 'Truck & Co',
+	    'EuropeanVatNumber' => '',
+	    'ExportFrom ' => '',
+	    'FinancialPeriodId' => '',
+	    'Flag' => '',
+	    'FlagDate' => '',
+	    'FlagUser' => '',
+	    'GVat' => '',
+	    'InvoiceJournalCode' => 'V',
+	    'IsDeleted' => 'false',
+	    'Item' => '',
+	    'JournalNumber' => '1',
+	    'JournalType' => 'Sale',
+	    'MasterBranchCategoryId1' => '',
+	    'MasterBranchCategoryId2' => '',
+	    'ModifiedBy ' => '',
+	    'ModifiedByName' => 'PICSOO API',
+	    'ModifiedDate' => '31/07/2023 00:00:00',
+	    'Net' => '121',
+	    'ProjectId' => '',
+	    'Qty' => '0',
+	    'ReconcilationId' => '0',
+	    'ReconciliationCode ' => '',
+	    'ReconciliationDate ' => '25/07/2023',
+	    'ReconciliationStatus' => 'N',
+	    'Reference' => '1',
+	    'ReferenceId' => '',
+	    'ReminderLevel' => '',
+	    'ReverseReferance' => '',
+	    'ReverseTransactions' => '',
+	    'ServicesGoods  ' => '',
+	    'TrackingNumber ' => '',
+	    'TransactionCode' => '1',
+	    'TransactionCodeExternal' => '',
+	    'TransactionDate' => '25/07/2023 00:00:00',
+	    'TransactionType' => 'Sale',
+	    'TransactionTypeExternal' => '',
+	    'TransactionsId' => '0',
+	    'UnitPrice' => '',
+	    'VATPercent' => '0',
+	    'VATTypeId' => '',
+	    'VatCode' => '',
+	    'VatPeriod' => '01/07/2023',
+	    'VatPeriodId' => '01/07/2023',
+	    'VateRate' => '21',
+	    'reference_external' => 'PICSOO API_' . $uniqueValue,
+	    'vatNumber' => ''
+	];
+	
+    $myList[] = $datatosend;
+}
+
+// Contrepartie
+function CreateTransactionL2()
+{
+	global $clientid, $picsoo_ws, $myList, $uniqueValue;
+
+    //AuthenticationCode = GlobalVar.AuthenticationCode;
+    //ClientsId' => '11135',
+
+	$datatosend = [
+		'AuthenticationCode' => $picsoo_ws->CurrentAuthentificationCode(),
+		'ClientsId' => $clientid,
+	    'AaccountNameId ' => '',
+	    'AccountCode' => '701000',
+	    'AccountGridType' => '03',
+	    'AccountGridType2' => '',
+	    'AccountName' => '',
+	    'Amount' => '-100',
+	    'AmountCurrency' => '0',
+	    'Analyt' => 'ANALYT',
+	    'BackupId' => '',
+	    'BankDescription' => '',
+	    'BankRef' => '',
+	    'BillSerivesGoodsId' => '',
+	    'CreatedBy' => '',
+	    'CreatedByName' => 'PICSOO API',
+	    'CreatedDate' => '',
+	    'Currency' => '',
+	    'CurrencyRate' => '0',
+	    'CustomerCode' => '400TRUCKCO',
+	    'CustomersId' => '',
+	    'DebitCreditType' => 'Credit',
+	    'Description' => 'Ventes produits finis en Belgique',
+	    'Discount' => '',
+	    'DueDate' => '30/12/1899 00:00:00',
+	    'Employee' => '',
+	    'EntityName' => 'Ventes produits finis en Belgique',
+	    'EuropeanVatNumber' => '',
+	    'ExportFrom' => '',
+	    'FinancialPeriodId' => '',
+	    'Flag' => '',
+	    'FlagDate' => '',
+	    'FlagUser' => '',
+	    'GVat' => '',
+	    'InvoiceJournalCode' => 'V',
+	    'IsDeleted' => 'false',
+	    'Item' => '',
+	    'JournalNumber' => '1',
+	    'JournalType' => 'Sale',
+	    'MasterBranchCategoryId1' => '',
+	    'MasterBranchCategoryId2 ' => '',
+	    'ModifiedBy' => '',
+	    'ModifiedByName' => 'PICSOO API',
+	    'ModifiedDate' => '31/07/2023 00:00:00',
+	    'Net' => '100',
+	    'ProjectId' => '',
+	    'Qty' => '0',
+	    'ReconcilationId' => '0',
+	    'ReconciliationCode' => '',
+	    'ReconciliationDate ' => '25/07/2023',
+	    'ReconciliationStatus' => 'N',
+	    'Reference' => '1',
+	    'ReferenceId' => '',
+	    'ReminderLevel' => '',
+	    'ReverseReferance' => '',
+	    'ReverseTransactions' => '',
+	    'ServicesGoods' => '',
+	    'TrackingNumber' => '',
+	    'TransactionCode' => '1',
+	    'TransactionCodeExternal' => '',
+	    'TransactionDate' => '25/07/2023 00:00:00',
+	    'TransactionType' => 'Sale',
+	    'TransactionTypeExternal' => '',
+	    'TransactionsId ' => '0',
+	    'UnitPrice' => '',
+	    'VATPercent' => '21',
+	    'VATTypeId' => '',
+	    'VatCode' => '21',
+	    'VatPeriod' => '01/07/2023',
+	    'VatPeriodId' => '01/07/2023',
+	    'VateRate' => '0',
+	    'reference_external' => 'PICSOO API_' . $uniqueValue,
+	    'vatNumber' => ''
+	];
+	
+    $myList[] = $datatosend;
+}
+
+// TVA
+function CreateTransactionL3()
+{
+	global $clientid, $picsoo_ws, $myList, $uniqueValue;
+
+    //AuthenticationCode = GlobalVar.AuthenticationCode;
+    //ClientsId' => '11135',
+
+	$datatosend = [
+		'AuthenticationCode' => $picsoo_ws->CurrentAuthentificationCode(),
+		'ClientsId' => $clientid,
+	    'AaccountNameId' => '',
+	    'AccountCode' => '451540',
+	    'AccountGridType' => '',
+	    'AccountGridType2' => '',
+	    'AccountName' => '',
+	    'Amount' => '-21',
+	    'AmountCurrency' => '0',
+	    'Analyt' => 'ANALYT',
+	    'BackupId' => '',
+	    'BankDescription' => '',
+	    'BankRef' => '',
+	    'BillSerivesGoodsId' => '',
+	    'CreatedBy' => '',
+	    'CreatedByName' => 'PICSOO API',
+	    'CreatedDate' => '',
+	    'Currency' => '',
+	    'CurrencyRate' => '0',
+	    'CustomerCode' => '400TRUCKCO',
+	    'CustomersId' => '',
+	    'DebitCreditType' => 'Credit',
+	    'Description' => 'Tva due sur ventes',
+	    'Discount' => '',
+	    'DueDate' => '30/12/1899 00:00:00',
+	    'Employee' => '',
+	    'EntityName' => 'Tva due sur ventes',
+	    'EuropeanVatNumber' => '',
+	    'ExportFrom ' => '',
+	    'FinancialPeriodId' => '',
+	    'Flag' => '',
+	    'FlagDate' => '',
+	    'FlagUser' => '',
+	    'GVat' => '54',
+	    'InvoiceJournalCode' => 'V',
+	    'IsDeleted' => 'false',
+	    'Item' => '',
+	    'JournalNumber' => '1',
+	    'JournalType' => 'Sale',
+	    'MasterBranchCategoryId1' => '',
+	    'MasterBranchCategoryId2' => '',
+	    'ModifiedBy' => '',
+	    'ModifiedByName' => 'PICSOO API',
+	    'ModifiedDate' => '31/07/2023 00:00:00',
+	    'Net' => '21',
+	    'ProjectId' => '',
+	    'Qty' => '0',
+	    'ReconcilationId' => '0',
+	    'ReconciliationCode' => '',
+	    'ReconciliationDate' => '25/07/2023',
+	    'ReconciliationStatus' => 'N',
+	    'Reference' => '1',
+	    'ReferenceId' => '',
+	    'ReminderLevel' => '',
+	    'ReverseReferance' => '',
+	    'ReverseTransactions' => '',
+	    'ServicesGoods' => '',
+	    'TrackingNumber' => '',
+	    'TransactionCode' => '1',
+	    'TransactionCodeExternal' => '',
+	    'TransactionDate' => '25/07/2023 00:00:00',
+	    'TransactionType' => 'Sale',
+	    'TransactionTypeExternal' => '',
+	    'TransactionsId' => '0',
+	    'UnitPrice' => '',
+	    'VATPercent' => '21',
+	    'VATTypeId' => '',
+	    'VatCode' => '21',
+	    'VatPeriod' => '01/07/2023',
+	    'VatPeriodId' => '01/07/2023',
+	    'VateRate' => '21',
+	    'reference_external' => 'PICSOO API_' . $uniqueValue,
+	    'vatNumber' => ''
+	];
+	
+    $myList[] = $datatosend;
+}
+
+function SaveItem()
+{
+	global $clientid, $picsoo_ws, $itemcode, $itemname;
+
+	if( $itemcode=='' || $itemname=='' )
+	{
+		    // Prepare the response as JSON
+	    	$response = array(
+	        	'message' => 'Echec',
+				'option' => 'alert',
+	        	'data' => "Item name and/or item code cannot be empty !"
+	    );
+
+	    // Send the response back to the client
+	    echo json_encode($response);
+	    exit; // End the script execution
+	}
+
+	$datatosend = [
+		'Mode' => '',
+        'UserId' => '',
+        'ItemName' => $itemcode,
+        'FRItemDescription' => $itemname . ' FR',
+        'NLItemDescription' => $itemname . ' NL',
+        'ItemDescription' => '',
+        'ItemType' => '',
+        'ItemImage' => '',
+        'SaleQty' => '10', // Stock réel
+        'SaleUnitPrice' => '130', // prix vente de l'article
+        'SaleVatRate' => '21',
+        'SaleAccountName' => '701000', // Compte de vente
+        'PurQty' => '0',
+        'PurUnitPrice' => '100',
+        'PurVatRate' => '21',
+        'AdjustAccountName' => '',
+        'OpeningBalance' => '',
+        'OpeningQty' => '',
+        'PurchaseBalance' => '',
+        'PurhcasePrice' => '100',
+        'IsStockManage' => 'False', // I track this item
+        'IsSale' => 'True', // I sale this item
+        'IsPurchase' => 'False', // I purchase this item
+        'CategoryName' => '',
+        'ProjectName' => '',
+        'PurAccountName' => '601000',
+        'TaxRatesClientsName' => '',
+        'PurTaxRatesClientsName' => '',
+        'IsVatmarginEnable' => '',
+        'HSNCode' => '',
+        'SupplierCode' => '',
+        'SalesVatCode' => '21',
+        'PurchaseVatCode' => '21',
+        'PackageQty' => '1',
+        'NetWeight' => '',
+        'BrutoWeight' => '',
+        'MPN' => '',
+        'ISBN' => '',
+        'EAN' => '', // Code barre
+        'CPU' => '',
+        'PAMP' => '',
+        'Substitue1Name' => '',
+        'Substitue2Name' => '',
+        'Waranty' => '',
+        'Brand' => '',
+        'Analytic' => '',
+        'Unit' => '', // unité de vente
+        'ItemCategoryType' => '',
+        'CreatedBy' => '',
+        'ModifiedBy' => '',
+        'WarehouseName' => '',
+        'InventoryAssetAccountName' => '',
+        'IsVatOnly' => '',
+        'IsDeleted' => 'False',
+        'VATCodePurchaseCredit' => '21',
+        'VATCodesalesCredit' => '21',
+        'ItemNomianlCode' => '',
+        'Barcode' => '',
+        'BarCodeTypeId' => '1', // ?? 
+        'Multiplier' => '1', // marge
+        'CostPrice' => '',
+
+        'AccountName' => '',
+        'EcoParticiPationItem' => '',
+
+        'ItemGoodServiceType' => '1',
+
+        'SaleUnitPriceVat' => '',
+
+        'ReferenceExternal' => 'PICSOO API'
+	];
+	
+	$ret = $picsoo_ws->SaveItem($clientid, $datatosend);
+
+	//file_put_contents('output.txt', print_r($ret, true));
+
+	echoresponse($ret);
+}
+
+function SaveJournalCode()
+{
+	global $clientid, $picsoo_ws, $journalcode, $journalname;
+
+	if( $journalcode=='' || $journalname=='' )
+	{
+		    // Prepare the response as JSON
+	    	$response = array(
+	        	'message' => 'Echec',
+				'option' => 'alert',
+	        	'data' => "Journal name and/or journal code cannot be empty !"
+	    );
+
+	    // Send the response back to the client
+	    echo json_encode($response);
+	    exit; // End the script execution
+	}
+
+	$JournalCodeType = '1'; // Ventes
+	//$JournalCodeType = '2'; // Achats
+	//$JournalCodeType = '25'; // A-Nouveaux - OD
+	//$JournalCodeType = '13'; // Trésorerie - banque - caisse
+	//$JournalCodeType = '4';  // crédits / achats
+	//$JournalCodeType = '3'; // crédits / ventes
+	//$JournalCodeType = '18'; // amortissements automatique
+	//$JournalCodeType = '2'; // archivage fournisseurs
+	//$JournalCodeType = '9'; // paiements automatiques
+	//$JournalCodeType = '25'; // non défini
+
+	$datatosend = [
+        'JournalCode' => $journalcode,
+        'Description' => $journalname,
+        'LastReferenceNumber' => '1',
+        'JournalCodeType' => $JournalCodeType,
+        'NominalCode' => '701000',
+        'DescriptionFR' => $journalname,
+        'DescriptionNL' => $journalname
+	];
+	
+	$ret = $picsoo_ws->SaveJournalCode($clientid, $datatosend);
+
+	//file_put_contents('output.txt', print_r($ret, true));
+
+	echoresponse($ret);
 }
 
 //{"IsSuccess":true,"Message":"Account added.","Data":1118376,"AdditionalMessage":null}
@@ -132,7 +603,7 @@ function SaveChartOfAccount()
         'Analytic' => '',
         'AccountActifPassifId' => '',
 
-        'ReferenceExternal' => 'PICSOO API',
+        'ReferenceExternal' => 'PICSOO API', // this is a marker to know from where data are coming from
 	];
 
 	$ret = $picsoo_ws->SaveChartOfAccount( $clientid, $datatosend );
@@ -142,12 +613,7 @@ function SaveChartOfAccount()
 	echoresponse($ret);
 }
 
-function SaveSupplier()
-{
-	// see SavecCustomer(), change "$picsoo_ws->SaveCustomers()" into "$picsoo_ws->SaveSuppliers()""
-}
-
-function SaveCustomer()
+function SaveCustomerSupplier()
 {
 	global $clientid, $picsoo_ws, $companyname, $customerfirstname, $customername, $customervat;
 
@@ -221,9 +687,11 @@ function SaveCustomer()
 
         'ReferenceExternal' => 'PICSOO_API_DEMO',
 	];
-	$customertype = 'C';
 
-	$ret = $picsoo_ws->SaveCustomers($clientid, $datatosend, $customertype);
+	$customertype = 'C'; // Customer
+	//$customertype = 'S'; // Supplier
+
+	$ret = $picsoo_ws->SaveCustomerSupplier($clientid, $datatosend, $customertype);
 
 	//file_put_contents('output.txt', print_r($ret, true));
 

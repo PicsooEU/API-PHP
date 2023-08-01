@@ -10,7 +10,7 @@ Documentation is available at [PICSOO API DOCUMENTATION](http://picsoocloud.com/
 
 ### What's new in the latest version : 
 
-- first release 
+- 
 - agd djjf kfk ```jdu djd djjd dk```. 
 
 

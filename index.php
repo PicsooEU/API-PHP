@@ -40,6 +40,12 @@
         label[for="firstname"],
 		label[for="vat"],
 
+		label[for="itemcode"],
+		label[for="itemname"],
+
+		label[for="journalcode"],
+		label[for="journalname"],
+
 		label[for="accountcode"],
 		label[for="accountname"] {
             color: black;
@@ -54,16 +60,27 @@
             grid-template-columns: repeat(4, 1fr); /* Updated to 4 columns */
             gap: 5px;
         }
+        
+        label[for="GetAuthentificationCode"],
         label[for="GetCompaniesListByEmail"],
         label[for="GetCompanyInfo"],
         label[for="ClearAllDataForGivenCompany"],
-        label[for="SaveCustomer"],
-		label[for="SaveChartOfAccount"] {
+        label[for="SaveCustomerSupplier"],
+        label[for="SaveCustomerSupplierList"],
+		label[for="SaveChartOfAccount"],
+		label[for="SaveJournalCode"],
+		label[for="GeTClientsByAccountant"],
+		label[for="SaveItem"] {
             color: blue;
         }
+		label[for="SaveTransaction"] {
+            color: red;
+        }
+        
         label[for="radio4"] {
-            color: blue;
+            color: black;
         }
+        
         .radio-label {
             display: flex;
             align-items: center;
@@ -88,7 +105,7 @@
 
 		<!-- GROUP #1 INPUT TEXT BOXES ----------------------------------------------------------------------------------------------------------------- -->
         <div class="section">
-			<!-- general ---->
+			<!-- general ------------------------------------------------------------------------------------------------------------------------------>
 			<h2>General :</h2>
             <div class="textbox-container">
                 <div>
@@ -108,12 +125,12 @@
                     <input type="text" id="bbbb" name="bbbb" placeholder="Leave empty">
                 </div>
 			</div>
-			<!-- customers ---->
+			<!-- customers -------------------------------------------------------------------------------------------------------------------------->
 			<h2>Customers :</h2>
             <div class="textbox-container">
                 <div>
                     <label for="companyname">Company name:</label>
-                    <input type="text" id="companyname" name="companyname" value="TruckCo" placeholder="company name">
+                    <input type="text" id="companyname" name="companyname" value="TRUCKCO" placeholder="company name">
                 </div>
                 <div>
                     <label for="name">Customer name:</label>
@@ -128,7 +145,7 @@
                     <input type="text" id="vat" name="vat" value="666217180" placeholder="An european VAT">
                 </div>
             </div>
-			<!-- chart of account ---->
+			<!-- chart of account ------------------------------------------------------------------------------------------------------------------->
 			<h2>Chart of account :</h2>
             <div class="textbox-container">
                 <div>
@@ -140,13 +157,45 @@
                     <input type="text" id="accountname" name="accountname" value="Ventes X" placeholder="account name">
                 </div>
             </div>
+			<!-- journal --------------------------------------------------------------------------------------------------------------------------->
+			<h2>Journal :</h2>
+            <div class="textbox-container">
+                <div>
+                    <label for="journalcode">Journal code:</label>
+                    <input type="text" id="journalcode" name="journalcode" value="VXX" placeholder="journal code">
+                </div>
+                <div>
+                    <label for="journalname">Journal name:</label>
+                    <input type="text" id="journalname" name="journalname" value="Pharma Sales" placeholder="journal name">
+                </div>
+            </div>
+			<!-- items ----------------------------------------------------------------------------------------------------------------------------->
+			<h2>Item :</h2>
+            <div class="textbox-container">
+                <div>
+                    <label for="itemcode">Item code:</label>
+                    <input type="text" id="itemcode" name="itemcode" value="RX232-C" placeholder="item code">
+                </div>
+                <div>
+                    <label for="itemname">Item name:</label>
+                    <input type="text" id="itemname" name="itemname" value="RX232 Component C 12pins" placeholder="item name">
+                </div>
+            </div>
         </div>
 
 		<!-- GROUP #2 API LIST ------------------------------------------------------------------------------------------------------------------------- -->
         <div class="section">
             <div class="radio-container">
                 <div class="radio-label">
-                    <input type="radio" name="radioGroup" value="GetCompaniesListByEmail" checked="checked" onclick="handleRadioSelection(this)">
+                    <input type="radio" name="radioGroup" value="GetAuthentificationCode" checked="checked" onclick="handleRadioSelection(this)">
+                    <label for="GetAuthentificationCode">GetAuthentificationCode</label>
+                </div>
+                <div class="radio-label">
+                    <input type="radio" name="radioGroup" value="GeTClientsByAccountant" checked="checked" onclick="handleRadioSelection(this)">
+                    <label for="GeTClientsByAccountant">GeTClientsByAccountant</label>
+                </div>
+                <div class="radio-label">
+                    <input type="radio" name="radioGroup" value="GetCompaniesListByEmail" onclick="handleRadioSelection(this)">
                     <label for="GetCompaniesListByEmail">GetCompaniesListByEmail</label>
                 </div>
                 <div class="radio-label">
@@ -154,16 +203,32 @@
                     <label for="GetCompanyInfo">GetCompanyInfo</label>
                 </div>
                 <div class="radio-label">
-                    <input type="radio" name="radioGroup" value="ClearAllDataForGivenCompany" onclick="handleRadioSelection(this)">
-                    <label for="ClearAllDataForGivenCompany">ClearAllDataForGivenCompany</label>
+                    <input type="radio" name="radioGroup" value="SaveCustomerSupplier" onclick="handleRadioSelection(this)">
+                    <label for="SaveCustomerSupplier">SaveCustomerSupplier</label>
                 </div>
                 <div class="radio-label">
-                    <input type="radio" name="radioGroup" value="SaveCustomer" onclick="handleRadioSelection(this)">
-                    <label for="SaveCustomer">SaveCustomer (-Supplier)</label>
+                    <input type="radio" name="radioGroup" value="SaveCustomerSupplierLIst" onclick="handleRadioSelection(this)">
+                    <label for="SaveCustomerSupplierList">SaveCustomerSupplierList</label>
                 </div>
                 <div class="radio-label">
                     <input type="radio" name="radioGroup" value="SaveChartOfAccount" onclick="handleRadioSelection(this)">
-                    <label for="SaveCustomer">SaveChartOfAccount</label>
+                    <label for="SaveChartOfAccount">SaveChartOfAccount</label>
+                </div>
+                <div class="radio-label">
+                    <input type="radio" name="radioGroup" value="SaveJournalCode" onclick="handleRadioSelection(this)">
+                    <label for="SaveJournalCode">SaveJournalCode</label>
+                </div>
+                <div class="radio-label">
+                    <input type="radio" name="radioGroup" value="SaveItem" onclick="handleRadioSelection(this)">
+                    <label for="SaveItem">SaveItems</label>
+                </div>
+                <div class="radio-label">
+                    <input type="radio" name="radioGroup" value="SaveTransaction" onclick="handleRadioSelection(this)">
+                    <label for="SaveTransaction">SaveTransaction</label>
+                </div>
+                <div class="radio-label">
+                    <input type="radio" name="radioGroup" value="ClearAllDataForGivenCompany" onclick="handleRadioSelection(this)">
+                    <label for="ClearAllDataForGivenCompany">ClearAllDataForGivenCompany</label>
                 </div>
                 <div class="radio-label">
                     <input type="radio" name="radioGroup" value="Not used" onclick="handleRadioSelection(this)">
@@ -211,6 +276,12 @@
 
 			var accountcodeValue = document.getElementById("accountcode").value;
 			var accountnameValue = document.getElementById("accountname").value;
+
+			var journalcodeValue = document.getElementById("journalcode").value;
+			var journalnameValue = document.getElementById("journalname").value;
+
+			var itemcodeValue = document.getElementById("itemcode").value;
+			var itemnameValue = document.getElementById("itemname").value;
 			//alert("handleOKButtonClick()");
 
             // Send the values to the server using AJAX
@@ -229,21 +300,31 @@
 					customervat: customervatValue,
 
 					accountcode: accountcodeValue,
-					accountname: accountnameValue
+					accountname: accountnameValue,
+
+					journalcode: journalcodeValue,
+					journalname: journalnameValue,
+
+					itemcode: itemcodeValue,
+					itemname: itemnameValue
                 },
 				dataType: "json", // Expect JSON response
-                success: function(response) {
-					console.log(response);
+                success: function(response) 
+                {
+					console.log("# " + response);
                     // Handle the success response if needed
-                    console.log(response.message); // Access the response properties as needed
-                    console.log(response.option); // Access the response properties as needed
-                    console.log(response.data); // Access the response properties as needed
+                    console.log("# " + response.message); // Access the response properties as needed
+                    console.log("# " + response.option); // Access the response properties as needed
+                    console.log("# " + response.data); // Access the response properties as needed
 					if( response.option=='alert' )
 						alert("Result :\n" + response.data);
                 },
-                error: function(jqXHR, textStatus, errorThrown) {
+                error: function(jqXHR, textStatus, errorThrown) 
+                {
                     // Handle the error if needed
-                    console.log("AJAX Error: " + textStatus + " " + errorThrown);
+                    console.log("AJAX Error: ");
+                    console.log("# " + textStatus);
+                    console.log("# " + errorThrown);
                 }
             });
         }

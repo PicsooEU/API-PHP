@@ -119,6 +119,9 @@ class Picsoo_ws
             $this->URL_SaveSupplierList            = "https://beapi.mindoo.co/api/Services/SaveSupplierList";
             $this->URL_SaveItemList                = "https://beapi.mindoo.co/api/Services/SaveItemList";
 
+            $this->URL_GeTClientsByAccountant      = "https://beapi.mindoo.co//api/Services/GeTClientsByAccountant";
+			$this->URL_GeTXmlTvaFile               = "https://beapi.mindoo.co/api/Services/GetVATReportXML";
+
 			//v1.1.76
             $this->URL_DeleteChartOfAccount        = "https://beapi.mindoo.co/api/Services/DeleteChartOfAccount";
 
@@ -182,7 +185,7 @@ class Picsoo_ws
             $this->URL_SaveSupplierList            = "https://stagingbeapi.mindoo.co/api/Services/SaveSupplierList";
             $this->URL_SaveItemList                = "https://stagingbeapi.mindoo.co/api/Services/SaveItemList";
 
-            $this->URL_GeTClientsByAccountant      = "https://stagingbeapi.mindoo.co//api/Services/GeTClientsByAccountant?accountant_email=";
+            $this->URL_GeTClientsByAccountant      = "https://stagingbeapi.mindoo.co//api/Services/GeTClientsByAccountant";
 			$this->URL_GeTXmlTvaFile               = "https://stagingbeapi.mindoo.co/api/Services/GetVATReportXML";
 
 			//v1.1.76
@@ -269,6 +272,37 @@ class Picsoo_ws
     	return $this->UserName;
     }
 
+    public function CurrentAuthentificationCode()
+    {
+    	return $this->AuthenticationCode;
+    }
+
+	// ----------------------------------------------------------------------------------------------------------------------
+	//
+	// ----------------------------------------------------------------------------------------------------------------------
+    public function GeTClientsByAccountant( $email )
+    {
+		$param = array();
+		
+		if ( $email == '' )
+			return '';
+
+		$url = $this->URL_GeTClientsByAccountant . "?accountant_email=" . $email;
+		$json = file_get_contents($url);
+		$json_data = json_decode($json, true);
+
+		if ( $this->DUMP_DBG )
+		{
+			$myfile = fopen("json_geTclientsbyaccountant_log.txt", "w") or die("Unable to open file!");
+			fwrite($myfile, print_r($json_data,true));
+			fclose($myfile);
+		}
+
+		$data_list = $json_data["Data"];
+
+		return $data_list;
+	}
+
 	// ----------------------------------------------------------------------------------------------------------------------
 	//
 	// ----------------------------------------------------------------------------------------------------------------------
@@ -291,8 +325,6 @@ class Picsoo_ws
 
 		return $json_data;
 	}
-
-
 
 	// ----------------------------------------------------------------------------------------------------------------------
 	//
@@ -843,20 +875,92 @@ class Picsoo_ws
 
         return $data_items;
     }
+
+	// ----------------------------------------------------------------------------------------------------------------------
+	// modification des dates de début et de fin de période.
+	// ----------------------------------------------------------------------------------------------------------------------
+	public function SaveFinancialPeriod( $clientid = '', $startdate = '', $enddate = '' )
+    {
+        if( $clientid == '' || $startdate == '' || $enddate == '' || $this->AuthenticationCode == '' )
+            return '';
+        
+		$findata += [ 'AuthenticationCode' => $this->AuthenticationCode ];
+        $findata += [ 'ClientId' => $clientid ];
+        $findata += [ 'StartDate' => $startdate ];
+        $findata += [ 'EndDate' => $enddate ];
+        
+        $url = $this->URL_SaveFinancialPeriod;
+        $json_data = json_encode($findata, true);
+        
+		if ( $this->DUMP_DBG )
+		{
+			$myfile = fopen("json_financialperiod_log.txt", "w") or die("Unable to open file!");
+			fwrite($myfile, print_r($json_data,true));
+			fclose($myfile);
+		}
+        
+        $json = $this->file_post_contents( $url, $json_data );
+        $json_data = json_decode($json, true);
+        
+		if ( $this->DUMP_DBG )
+		{
+			$myfile = fopen("result_financialperiod_log.txt", "a") or die("Unable to open file!");
+			fwrite($myfile, date("h:i:s") . " - " . $clientid . ' msg : [' . $json_data['Message'] . ']' . "\n" );
+			fclose($myfile);
+		}
+		
+        return $json_data;
+    }    
+
+	// ----------------------------------------------------------------------------------------------------------------------
+	//
+	// ----------------------------------------------------------------------------------------------------------------------
+	public function SaveCustomerSupplierContacts( $clientid = '', $contactdata = '' )
+    {
+        if( $clientid == '' || $contactdata == '' || $this->AuthenticationCode == '' )
+            return '';
+        
+		$itemdata += [ 'AuthenticationCode' => $this->AuthenticationCode ];
+        $itemdata += [ 'ClientId' => $clientid ];
+
+        
+        $url = $this->URL_SaveCustomerContact;
+        $json_data = json_encode($contactdata, true);
+        
+		if ( $this->DUMP_DBG )
+		{
+			$myfile = fopen("json_contact_log.txt", "w") or die("Unable to open file!");
+			fwrite($myfile, print_r($json_data,true));
+			fclose($myfile);
+		}
+        
+        $json = $this->file_post_contents( $url, $json_data );
+        $json_data = json_decode($json, true);
+        
+		if ( $this->DUMP_DBG )
+		{
+			$myfile = fopen("result_contact_log.txt", "a") or die("Unable to open file!");
+			fwrite($myfile, date("h:i:s") . " - " . $clientid . ' msg : [' . $json_data['Message'] . ']' . "\n" );
+			fclose($myfile);
+		}
+		
+        return $json_data;
+    }    
     
 	// ----------------------------------------------------------------------------------------------------------------------
 	//
 	// ----------------------------------------------------------------------------------------------------------------------
-	public function SaveItems( $clientid = '', $itemslist = '' )
+	public function SaveItem( $clientid = '', $itemdata = '' )
     {
-        if( $clientid == '' || $itemslist == '' || $this->AuthenticationCode == '' )
+        if( $clientid == '' || $itemdata == '' || $this->AuthenticationCode == '' )
             return '';
         
-		$this->AuthenticationCode = $this->GetAuthentificationCode();
-		$itemslist += [ 'AuthenticationCode' => $this->AuthenticationCode ];
+		$itemdata += [ 'AuthenticationCode' => $this->AuthenticationCode ];
+        $itemdata += [ 'ClientId' => $clientid ];
+
         
         $url = $this->URL_SaveItemDetails;
-        $json_data = json_encode($itemslist, true);
+        $json_data = json_encode($itemdata, true);
         
 		if ( $this->DUMP_DBG )
 		{
@@ -866,14 +970,12 @@ class Picsoo_ws
 		}
         
         $json = $this->file_post_contents( $url, $json_data );
-        //$json = file_get_contents($url, false, $json_data);
         $json_data = json_decode($json, true);
         
 		if ( $this->DUMP_DBG )
 		{
 			$myfile = fopen("result_items_log.txt", "a") or die("Unable to open file!");
-			//fwrite($myfile, print_r($json_data, true));
-			fwrite($myfile, date("h:i:s") . " - " . $clientid . ' msg : [' . $json_data['Message'] . '] - ' . $ie_reference . '_' . $mvts . "\n" );
+			fwrite($myfile, date("h:i:s") . " - " . $clientid . ' msg : [' . $json_data['Message'] . ']' . "\n" );
 			fclose($myfile);
 		}
 		
@@ -963,7 +1065,7 @@ class Picsoo_ws
 		{
 			$myfile = fopen("result_items_log.txt", "a") or die("Unable to open file!");
 			//fwrite($myfile, print_r($json_data, true));
-			fwrite($myfile, date("h:i:s") . " - " . $clientid . ' msg : [' . $json_data['Message'] . '] - ' . $ie_reference . '_' . $mvts . "\n" );
+			fwrite($myfile, date("h:i:s") . " - " . $clientid . ' msg : [' . $json_data['Message'] . ']' . "\n" );
 			fclose($myfile);
 		}
 		
@@ -1103,6 +1205,35 @@ class Picsoo_ws
 	// ----------------------------------------------------------------------------------------------------------------------
 	//
 	// ----------------------------------------------------------------------------------------------------------------------
+	public function SaveJournalCode( $clientid = '', $journaldata = '' )
+    {
+        if( $clientid == '' || $journaldata == '' || $this->AuthenticationCode == '' )
+            return '';
+
+        $journaldata += [ 'AuthenticationCode' => $this->AuthenticationCode ];
+        $journaldata += [ 'ClientId' => $clientid ];
+
+		$url = $this->URL_SaveJournalCode;
+            
+        $json_data = json_encode($journaldata, true);
+        
+		if ( $this->DUMP_DBG )
+		{
+			$myfile = fopen("json_customers_log.txt", "w") or die("Unable to open file!");
+			fwrite($myfile, $json_data);
+			
+			fclose($myfile);
+		}
+        
+        $json = $this->file_post_contents( $url, $json_data );
+        $json_data = json_decode($json, true);
+        
+        return $json_data;
+    }    
+
+	// ----------------------------------------------------------------------------------------------------------------------
+	//
+	// ----------------------------------------------------------------------------------------------------------------------
 	public function SaveChartOfAccount( $clientid = '', $accountdata = '' )
     {
         if( $clientid == '' || $accountdata == '' || $this->AuthenticationCode == '' )
@@ -1131,7 +1262,7 @@ class Picsoo_ws
 	// ----------------------------------------------------------------------------------------------------------------------
 	//
 	// ----------------------------------------------------------------------------------------------------------------------
-	public function SaveCustomers( $clientid = '', $customerdata = '', $customerstype = '' )
+	public function SaveCustomerSupplier( $clientid = '', $customerdata = '', $customerstype = '' )
     {
         if( $clientid == '' || $customerdata == '' || $customerstype == '' || $this->AuthenticationCode == '' )
             return '';
@@ -1204,7 +1335,7 @@ class Picsoo_ws
 		{
 			$myfile = fopen("result_customers_log.txt", "a") or die("Unable to open file!");
 			//fwrite($myfile, print_r($json_data, true));
-			fwrite($myfile, date("h:i:s") . " - " . $clientid . ' msg : [' . $json_data['Message'] . '] - ' . $ie_reference . '_' . $mvts . "\n" );
+			fwrite($myfile, date("h:i:s") . " - " . $clientid . ' msg : [' . $json_data['Message'] . ']' . "\n" );
 			fclose($myfile);
 		}
 
@@ -1330,13 +1461,10 @@ class Picsoo_ws
 	// ----------------------------------------------------------------------------------------------------------------------
 	//
 	// ----------------------------------------------------------------------------------------------------------------------
-	public function SaveTransactionsDetails( $clientid = '', $transactionslist = '', $ie_reference = '', $mvts = 0 )
+	public function SaveTransactionsDetails( $clientid = '', $transactionslist = '' )
     {
-        if( $clientid == '' || $transactionslist == '' || $this->AuthenticationCode == '' || $ie_reference == '' )
+        if( $clientid == '' || $transactionslist == '' || $this->AuthenticationCode == '' )
             return '';
-        
-        //if( $mvts != 2 && $mvts != 3 ) //DBG
-        //    return ''; //DBG
         
         //$transactionslist += [ 'AuthenticationCode' => $this->AuthenticationCode ];
          
@@ -1351,8 +1479,8 @@ class Picsoo_ws
 			//file_put_contents('dbg.txt', date("h:i:s") . " - " . $json_data ."\n", FILE_APPEND);
 		}
 
-		$this->AuthenticationCode = $this->GetAuthentificationCode();
-		$url = $this->URL_SaveTransactionsDetails . "?AuthenticationCode=" . $this->AuthenticationCode;
+		//$this->AuthenticationCode = $this->GetAuthentificationCode();
+		$url = $this->URL_SaveTransactionsDetails; // . "?AuthenticationCode=" . $this->AuthenticationCode;
 		
 		if ( $this->DUMP_DBG )
 		{
@@ -1373,7 +1501,7 @@ class Picsoo_ws
 		{
 			$myfile = fopen("result_transactions_log.txt", "a") or die("Unable to open file!");
 			//fwrite($myfile, print_r($json_data, true));
-			fwrite($myfile, date("h:i:s") . " - " . $clientid . ' msg : [' . $json_data['Message'] . '] - ' . $ie_reference . '_' . $mvts . "\n" );
+			fwrite($myfile, date("h:i:s") . " - " . $clientid . ' msg : [' . $json_data['Message'] . '] - ' . "\n" );
 			fclose($myfile);
 			//file_put_contents('dbg.txt', date("h:i:s") . " - " . $json_data ."\n", FILE_APPEND);
 		}
