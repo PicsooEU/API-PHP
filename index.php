@@ -70,9 +70,13 @@
 		label[for="SaveChartOfAccount"],
 		label[for="SaveJournalCode"],
 		label[for="GeTClientsByAccountant"],
+		label[for="CheckAccountCodeExistOrNot"],
+		label[for="GetRowsCount"],
+		label[for="GetVatList"],
 		label[for="SaveItem"] {
             color: blue;
         }
+
 		label[for="GetCustomerSupplierInfo"],
 		label[for="SaveTransaction"] {
             color: red;
@@ -231,11 +235,24 @@
                     <input type="radio" name="radioGroup" value="GetCustomerSupplierInfo" onclick="handleRadioSelection(this)">
                     <label for="GetCustomerSupplierInfo">GetCustomerSupplierInfo</label>
                 </div>
-                
                 <div class="radio-label">
                     <input type="radio" name="radioGroup" value="ClearAllDataForGivenCompany" onclick="handleRadioSelection(this)">
                     <label for="ClearAllDataForGivenCompany">ClearAllDataForGivenCompany</label>
                 </div>
+                <div class="radio-label">
+                    <input type="radio" name="radioGroup" value="CheckAccountCodeExistOrNot" onclick="handleRadioSelection(this)">
+                    <label for="CheckAccountCodeExistOrNot">CheckAccountCodeExistOrNot</label>
+                </div>
+                <div class="radio-label">
+                    <input type="radio" name="radioGroup" value="GetRowsCount" onclick="handleRadioSelection(this)">
+                    <label for="GetRowsCount">GetRowsCount</label>
+                </div>
+                <div class="radio-label">
+                    <input type="radio" name="radioGroup" value="GetVatList" onclick="handleRadioSelection(this)">
+                    <label for="GetVatList">GetVatList</label>
+                </div>
+ 
+                
                 <div class="radio-label">
                     <input type="radio" name="radioGroup" value="Not used" onclick="handleRadioSelection(this)">
                     <label for="radio4">Not used</label>

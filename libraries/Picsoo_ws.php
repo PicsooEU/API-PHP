@@ -280,6 +280,29 @@ class Picsoo_ws
 	// ----------------------------------------------------------------------------------------------------------------------
 	//
 	// ----------------------------------------------------------------------------------------------------------------------
+    public function CheckAccountCodeExistOrNot( $clientid, $accountcode )
+    {
+		if ( $clientid == '' )
+			return '';
+
+		$param = array();
+
+		$param += [ 'AuthenticationCode' => $this->AuthenticationCode ];
+		$param += [ 'ClientId' => $clientid ];
+		$param += [ 'AccountCode' => $accountcode ];
+
+		$url = $this->URL_CheckAccountCodeExistOrNot;
+		$json_data = json_encode($param, true);
+
+		$json = $this->file_post_contents( $url, $json_data );
+		$json_data = json_decode($json, true);
+
+		return $json_data;
+	}
+
+	// ----------------------------------------------------------------------------------------------------------------------
+	//
+	// ----------------------------------------------------------------------------------------------------------------------
     public function GetCustomerSupplierInfo( $clientid, $type, $name, $vat, $phone )
     {
 		if ( $clientid == '' || $type == '' )
@@ -335,12 +358,11 @@ class Picsoo_ws
 	// ----------------------------------------------------------------------------------------------------------------------
     public function GetCompanyInfo( $clientid )
     {
-		$param = array();
-		
 		if ( $clientid == '' )
 			return '';
 
-		//$this->AuthenticationCode = $this->GetAuthentificationCode();
+		$param = array();
+
 		$param += [ 'AuthenticationCode' => $this->AuthenticationCode ];
 		$param += [ 'ClientId' => $clientid ];
 
@@ -386,11 +408,11 @@ class Picsoo_ws
 	// ----------------------------------------------------------------------------------------------------------------------
     public function GetInvoicesList( $clientid = '', $startdate = '', $enddate = '' )
     {
-		$param = array();
-		
 		if ( $clientid == '' )
 			return '';
 
+		$param = array();
+		
 		$url = $this->URL_GetListForMultipleTable . "?ClientId=" . $clientid . "&Table=invoice" . "&AuthenticationCode=" . $this->AuthenticationCode . "&StartDate=" . $startdate . "&EndDate=" . $enddate ;
 		$json = file_get_contents($url);
 		$json_data = json_decode($json, true);
@@ -421,11 +443,11 @@ class Picsoo_ws
 	// ----------------------------------------------------------------------------------------------------------------------
     public function GetCustomersList( $clientid = '', $customerid = '' )
     {
-		$param = array();
-		
 		if ( $clientid == '' )
 			return '';
 
+		$param = array();
+		
 		$url = $this->URL_GetListForMultipleTable . "?ClientId=" . $clientid . "&Table=customers" . "&Id=" . $customerid . "&AuthenticationCode=" . $this->AuthenticationCode;
 		$json = file_get_contents($url);
 		$json_data = json_decode($json, true);
@@ -457,12 +479,10 @@ class Picsoo_ws
 	// ----------------------------------------------------------------------------------------------------------------------
     private function GetListForMultipleTable( $clientid = '', $table = '', $customerid = '' )
     {
-		$param = array();
-		
 		if ( $clientid == '' || $table == '' )
 			return '';
 
-		//$this->AuthenticationCode = $this->GetAuthentificationCode();
+		$param = array();
 
 		$url = $this->URL_GetListForMultipleTable . "?ClientId=" . $clientid . "&Table=" . $table . "&Id=" . $customerid . "&AuthenticationCode=" . $this->AuthenticationCode;
 		$json = file_get_contents($url);
@@ -494,11 +514,11 @@ class Picsoo_ws
 	// ----------------------------------------------------------------------------------------------------------------------
     public function GetItemImage( $clientid = '', $itemid = '' )
     {
-		$param = array();
-		
 		if ( $clientid == '' || $itemid == '' )
 			return '';
 
+		$param = array();
+		
 		//$this->AuthenticationCode = $this->GetAuthentificationCode();
 
 		$url = $this->URL_GetItemImage . "?ClientId=" . $clientid . "&ItemId=" . $itemid . "&AuthenticationCode=" . $this->AuthenticationCode;
@@ -524,18 +544,18 @@ class Picsoo_ws
 	//
 	// Parameter:
 	// {
-    // "Table":"Invoice",
-    // "where":"fk_clients_id='10568' and invoice_date ='2020-04-21'"
+    // "Table":"Customers",
+    // "where":"fk_clients_id='11135' and email_address='12345@test.com'"
 	// }
-	// $data = $this->picsoo_ws->GetRowsCount( "transactions", "fk_clients_id='10929' and transaction_type='Cash'");
+	// $data = $this->picsoo_ws->GetRowsCount( "customers", "fk_clients_id='11135' and email_address='12345@test.com'");
 	// ----------------------------------------------------------------------------------------------------------------------
-    public function GetRowsCount( $tablename = '', $sqlstatement = '' )
+    public function GetRowsCount( $clientid = '', $tablename = '', $sqlstatement = '' )
     {
-		$param = array();
-		
-		if ( $sqlstatement == '' || $tablename == '' )
+		if ( $clientid == '' || $sqlstatement == '' || $tablename == '' )
 			return '';
 
+		$param = array();
+		
 		$this->AuthenticationCode = $this->GetAuthentificationCode();
 		$param += [ 'AuthenticationCode' => $this->AuthenticationCode ];
 		$param += [ 'Table' => $tablename ];
@@ -562,7 +582,9 @@ class Picsoo_ws
 		}
 		$data = $json_data["Data"];
 
-		return $data[0][Column1];
+		$ret = strval($data[0]['Column1']);
+
+		return $ret;
     }
 
 	// ----------------------------------------------------------------------------------------------------------------------
@@ -585,10 +607,10 @@ class Picsoo_ws
 	// ----------------------------------------------------------------------------------------------------------------------
     public function GetDatabaseTable( $clientid = '', $tablename = '', $sqlstatement = '' )
     {
-		$param = array();
-		
 		if ( $clientid == '' || $tablename == '' )
 			return '';
+
+		$param = array();
 
 		$this->AuthenticationCode = $this->GetAuthentificationCode();
 		$param += [ 'AuthenticationCode' => $this->AuthenticationCode ];
@@ -625,11 +647,11 @@ class Picsoo_ws
 	// ----------------------------------------------------------------------------------------------------------------------
     public function GetInvoiceBillDetails( $clientid = '', $invoiceid = '' )
     {
-		$param = array();
-		
 		if ( $clientid == '' || $invoiceid == '' )
 			return '';
 
+		$param = array();
+		
 		$this->AuthenticationCode = $this->GetAuthentificationCode();
 		$param += [ 'AuthenticationCode' => $this->AuthenticationCode ];
 		$param += [ 'ClientId' => $clientid ];
@@ -768,7 +790,7 @@ class Picsoo_ws
 	// ----------------------------------------------------------------------------------------------------------------------
 	// retourne la liste compléte des paramètres TVA pour un client_id
 	// ----------------------------------------------------------------------------------------------------------------------
-	public function GetValListByWS( $clientid = '' )
+	public function GetVatListByWS( $clientid = '' )
 	{
 		if ( $clientid == '' || $this->AuthenticationCode == '' )
 			return '';
@@ -811,7 +833,7 @@ class Picsoo_ws
 		*/
 	}
 
-	public function GetValList( $clientid = '' )
+	public function GetVatList( $clientid = '' )
 	{
 		if ( $clientid == '' )
 			return '';

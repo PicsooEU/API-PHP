@@ -80,6 +80,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST')
 			case "GetCustomerSupplierInfo":
 				GetCustomerSupplierInfo();
 				break;
+			case "CheckAccountCodeExistOrNot":
+				CheckAccountCodeExistOrNot();
+				break;
+			case "GetRowsCount":
+				GetRowsCount();
+				break;
+			case "GetVatList":
+				GetVatList();
+				break;
 			default:
 	    		// Prepare the response as JSON
     			$response = array(
@@ -94,10 +103,44 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST')
     }
 }
 
+function GetVatList()
+{
+	global $clientid, $picsoo_ws;
+
+	$ret = $picsoo_ws->GetVatList( $clientid );
+
+	echoresponse($ret);
+}
+
+function GetRowsCount()
+{
+	global $clientid, $picsoo_ws, $accountcode;
+
+	$ret = $picsoo_ws->GetRowsCount( $clientid, 'customers', "fk_clients_id='11135' and email_address='12345@test.com'" );
+
+	// Prepare the response as JSON
+	$response = array(
+		'message' => 'Echec',
+			'option' => 'alert',
+		'data' => 'Number of rows : ' . $ret
+		);
+	    // Send the response back to the client
+	echo json_encode($response);
+	exit; // End the script execution
+}
+
+function CheckAccountCodeExistOrNot()
+{
+	global $clientid, $picsoo_ws, $accountcode;
+
+	$ret = $picsoo_ws->CheckAccountCodeExistOrNot( $clientid, $accountcode );
+
+	echoresponse($ret);
+}
+
 function GetAuthentificationCode()
 {
-	
-	
+	// internal use only.	
 }
 
 function GetCustomerSupplierInfo( )
@@ -754,7 +797,8 @@ function echoresponse($msg)
     );
 
     // Send the response back to the client
-    echo json_encode($response);
+    $ret = json_encode($response);
+    echo $ret;
     exit; // End the script execution
 }
 ?>
