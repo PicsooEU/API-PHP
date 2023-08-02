@@ -280,12 +280,39 @@ class Picsoo_ws
 	// ----------------------------------------------------------------------------------------------------------------------
 	//
 	// ----------------------------------------------------------------------------------------------------------------------
+    public function GetCustomerSupplierInfo( $clientid, $type, $name, $vat, $phone )
+    {
+		if ( $clientid == '' || $type == '' )
+			return '';
+
+		if ( $name == '' && $vat == '' && $phone == '' )
+			return '';
+		
+		$url = $this->URL_GetCustomerSupplierInfo . "?ClientId=" . $clientid . "&Type=" . $type . "&Name=" . $name . "&VAT=" . $vat . "&Phone=" . $phone;
+		$json = file_get_contents($url);
+		$json_data = json_decode($json, true);
+
+		if ( $this->DUMP_DBG )
+		{
+			$myfile = fopen("json_gecustomersupplierinfo_log.txt", "w") or die("Unable to open file!");
+			fwrite($myfile, print_r($json_data,true));
+			fclose($myfile);
+		}
+
+		$data_list = $json_data["Data"];
+
+		return $data_list;
+	}
+
+	// ----------------------------------------------------------------------------------------------------------------------
+	//
+	// ----------------------------------------------------------------------------------------------------------------------
     public function GeTClientsByAccountant( $email )
     {
-		$param = array();
-		
 		if ( $email == '' )
 			return '';
+
+		$param = array();
 
 		$url = $this->URL_GeTClientsByAccountant . "?accountant_email=" . $email;
 		$json = file_get_contents($url);
@@ -293,7 +320,7 @@ class Picsoo_ws
 
 		if ( $this->DUMP_DBG )
 		{
-			$myfile = fopen("json_geTclientsbyaccountant_log.txt", "w") or die("Unable to open file!");
+			$myfile = fopen("json_getclientsbyaccountant_log.txt", "w") or die("Unable to open file!");
 			fwrite($myfile, print_r($json_data,true));
 			fclose($myfile);
 		}

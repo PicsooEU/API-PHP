@@ -73,6 +73,7 @@
 		label[for="SaveItem"] {
             color: blue;
         }
+		label[for="GetCustomerSupplierInfo"],
 		label[for="SaveTransaction"] {
             color: red;
         }
@@ -226,6 +227,11 @@
                     <input type="radio" name="radioGroup" value="SaveTransaction" onclick="handleRadioSelection(this)">
                     <label for="SaveTransaction">SaveTransaction</label>
                 </div>
+                <div class="radio-label">
+                    <input type="radio" name="radioGroup" value="GetCustomerSupplierInfo" onclick="handleRadioSelection(this)">
+                    <label for="GetCustomerSupplierInfo">GetCustomerSupplierInfo</label>
+                </div>
+                
                 <div class="radio-label">
                     <input type="radio" name="radioGroup" value="ClearAllDataForGivenCompany" onclick="handleRadioSelection(this)">
                     <label for="ClearAllDataForGivenCompany">ClearAllDataForGivenCompany</label>

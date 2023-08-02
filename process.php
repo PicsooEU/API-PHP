@@ -77,6 +77,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST')
 			case "GeTClientsByAccountant":
 				GeTClientsByAccountant();
 				break;
+			case "GetCustomerSupplierInfo":
+				GetCustomerSupplierInfo();
+				break;
 			default:
 	    		// Prepare the response as JSON
     			$response = array(
@@ -95,6 +98,15 @@ function GetAuthentificationCode()
 {
 	
 	
+}
+
+function GetCustomerSupplierInfo( )
+{
+	global $clientid, $picsoo_ws, $customervat;
+
+	$ret = $picsoo_ws->GetCustomerSupplierInfo( $clientid, 'C', '', $customervat, '' );
+
+	echoresponse($ret);
 }
 
 function GeTClientsByAccountant()
