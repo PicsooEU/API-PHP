@@ -18,6 +18,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST')
 	$customerfirstname = $_POST['customerfirstname'];
 	$customerfirstname = $_POST['customerfirstname'];
  	$customervat = $_POST['customervat'];
+ 	$customeraddress = $_POST['customeraddress'];
+ 	$customeremail = $_POST['customeremail'];
 
  	$accountcode = $_POST['accountcode'];
  	$accountname = $_POST['accountname'];
@@ -670,7 +672,7 @@ function SaveChartOfAccount()
 
 function SaveCustomerSupplier()
 {
-	global $clientid, $picsoo_ws, $companyname, $customerfirstname, $customername, $customervat;
+	global $clientid, $picsoo_ws, $companyname, $customerfirstname, $customername, $customervat, $customeraddress, $customeremail;
 
 	if( $customerfirstname=='' || $customername=='' )
 	{
@@ -694,16 +696,16 @@ function SaveCustomerSupplier()
         'Title' => '',
         'FirstName' => $customerfirstname,
         'LastName' => $customername,
-        'Email' => '12345@test.com',
+        'Email' => $customeremail,
         'PrimaryPhone' => '',
         'ContactType' => '',
-        'BillingAddressLine1' => '',
+        'BillingAddressLine1' => $customeraddress,
         'BillingAddressLine2' => '',
         'BillingCity' => '',
         'BillingState' => '',
         'BillingCountry' => '',
         'BillingCountry' => '',
-        'DeliveryAddressLine1' => '',
+        'DeliveryAddressLine1' => $customeraddress,
         'DeliveryAddressLine2' => '',
         'DeliveryCity' => '',
         'DeliveryState' => '',

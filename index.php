@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Picsoo API Demo Platform (staging) v0.01</title>
+    <title>Picsoo API Demo Platform (staging) v0.02</title>
     <style>
         /* Styling for the sections and line separator */
         .section {
@@ -39,6 +39,8 @@
 		label[for="name"],
         label[for="firstname"],
 		label[for="vat"],
+		label[for="address"],
+		label[for="customeremail"],
 
 		label[for="itemcode"],
 		label[for="itemname"],
@@ -105,7 +107,7 @@
     <form id="myForm">
 		<!-- TITLE ------------------------------------------------------------------------------------------------------------------------------------- -->
         <div class="section">
-            <h1>Picsoo API Demo Platform (staging) v0.01</h1>
+            <h1>Picsoo API Demo Platform (staging) v1.01</h1>
         </div>
 
 		<!-- GROUP #1 INPUT TEXT BOXES ----------------------------------------------------------------------------------------------------------------- -->
@@ -146,8 +148,16 @@
                     <input type="text" id="firstname" name="firstname" value="Patrick" placeholder="A firstname">
                 </div>
                 <div>
-                    <label for="vat">VAT:</label>
+                    <label for="vat">Customer VAT:</label>
                     <input type="text" id="vat" name="vat" value="666217180" placeholder="An european VAT">
+                </div>
+                <div>
+                    <label for="address">Customer address:</label>
+                    <input type="text" id="address" name="address" value="Avenue du Rois 10" placeholder="An address">
+                </div>
+                <div>
+                    <label for="customeremail">Customer email:</label>
+                    <input type="text" id="customeremail" name="customeremail" value="12345@test.com" placeholder="An email">
                 </div>
             </div>
 			<!-- chart of account ------------------------------------------------------------------------------------------------------------------->
@@ -296,6 +306,8 @@
 			var customernameValue = document.getElementById("name").value;
             var customerfirstnameValue = document.getElementById("firstname").value;
             var customervatValue = document.getElementById("vat").value;
+            var customeraddressValue = document.getElementById("address").value;
+            var customeremailValue = document.getElementById("customeremail").value;
 
 			var accountcodeValue = document.getElementById("accountcode").value;
 			var accountnameValue = document.getElementById("accountname").value;
@@ -321,6 +333,8 @@
 					customername: customernameValue,
 					customerfirstname: customerfirstnameValue,
 					customervat: customervatValue,
+					customeraddress: customeraddressValue,
+					customeremail: customeremailValue,
 
 					accountcode: accountcodeValue,
 					accountname: accountnameValue,
