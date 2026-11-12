@@ -272,7 +272,7 @@ class Picsoo_ws
     	return $this->UserName;
     }
 
-    public function CurrentAuthentificationCode()
+    public function CurrentAuthenticationCode()
     {
     	return $this->AuthenticationCode;
     }
@@ -382,9 +382,9 @@ class Picsoo_ws
     {
         $aut = array
         (
-            'AppicationKey' => $this->ApplicationKey,
-            'Password' => $this->Password,
-            'UserName' => $this->UserName
+            'AppicationKey' => $this->ApplicationKey, // 'C5C121CF-8625-4B3C-9D69-E99BA2AA0866'
+            'Password' => $this->Password, // Dev@1234!
+            'UserName' => $this->UserName // dev@picsoo.eu
         );
        
         $response = $this->HttpRequest( $aut );
@@ -1561,34 +1561,49 @@ class Picsoo_ws
 	// ----------------------------------------------------------------------------------------------------------------------
 	// https://www.codexworld.com/post-receive-json-data-using-php-curl/#:~:text=Send%20JSON%20data%20via%20POST%20with%20PHP%20cURL&text=Initiate%20new%20cURL%20resource%20using,json%20using%20the%20CURLOPT_HTTPHEADER%20option.
 	// ----------------------------------------------------------------------------------------------------------------------
-    private function HttpRequest( $dataarray )
-    {
-        $jsondata = json_encode($dataarray);
-        
-        // API URL
-        $url = $this->URL_LoginApplicationKey;
+	private function HttpRequest($dataarray)
+	{
+		// API URL
+	    $url = $this->URL_LoginApplicationKey;
 
-        // Create a new cURL resource
-        $ch = curl_init($url);
+	    $jsondata = json_encode($dataarray);
 
-        // Attach encoded JSON string to the POST fields
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $jsondata);
+	    // Create a new cURL resource
+	    $ch = curl_init();
 
-        // Set the content type to application/json
-        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type:application/json'));
+	    curl_setopt_array($ch, [
+	        CURLOPT_URL            => $url,
+	        CURLOPT_POST           => true,
+	        CURLOPT_POSTFIELDS     => $jsondata, // Attach encoded JSON string to the POST fields
+	        CURLOPT_HTTPHEADER     => [
+	            'Content-Type: application/json', // Set the content type to application/json
+	            'Accept: application/json'
+	        ],
+	        CURLOPT_RETURNTRANSFER => true, // Return response instead of outputting
+	        CURLOPT_VERBOSE        => true,
+	        CURLOPT_SSL_VERIFYHOST => 2,
+	        CURLOPT_CONNECTTIMEOUT => 15,
+	        CURLOPT_TIMEOUT        => 30
+	    ]);
 
-        // Return response instead of outputting
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+		// Execute the POST request
+	    $result = curl_exec($ch);
 
-        // Execute the POST request
-        $result = curl_exec($ch);
+	    // Diagnostic
+	    /*error_log("========== CURL DEBUG ==========");
+	    error_log("URL: " . $url);
+	    error_log("JSON SENT: " . $jsondata);
+	    error_log("CURL ERROR NUMBER: " . curl_errno($ch));
+	    error_log("CURL ERROR: " . curl_error($ch));
+	    error_log("HTTP STATUS: " . curl_getinfo($ch, CURLINFO_HTTP_CODE));
+	    error_log("CURL RESULT: " . var_export($result, true));
+	    error_log("================================");*/
 
-        // Close cURL resource
-        curl_close($ch);    
-        
-        return $result;
-    }
-    
+	    // Close cURL resource
+	    curl_close($ch);
+
+	    return $result;
+	}
 	// ----------------------------------------------------------------------------------------------------------------------
 	// DH : not used but I keep it instead of ...
 	// Method: POST, PUT, GET etc
