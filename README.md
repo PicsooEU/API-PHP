@@ -13,7 +13,6 @@ Documentation is available at [PICSOO API DOCUMENTATION](http://picsooapi.com/pi
 - First release ```... ...```. 
 - 1.01 October 16th, 2023:
   - added customer address and customer email.
-- Second release ```... ...```. 
 - 1.1.0 November 11th, 2026:
   - updated code to our new server hosting.
 
