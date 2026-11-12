@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Picsoo API Demo Platform (staging) v0.02</title>
+    <title>Picsoo API Demo Platform (staging) v1.1.0</title>
     <style>
         /* Styling for the sections and line separator */
         .section {
@@ -39,8 +39,6 @@
 		label[for="name"],
         label[for="firstname"],
 		label[for="vat"],
-		label[for="address"],
-		label[for="customeremail"],
 
 		label[for="itemcode"],
 		label[for="itemname"],
@@ -101,13 +99,23 @@
         button {
             margin-right: 5px;
         }
+        
+        .php-info {
+		    font-family: monospace;
+		    font-size: 12px;
+		    color: #666;
+		    background: #f5f5f5;
+		    padding: 8px;
+		    border-radius: 4px;
+		    display: inline-block;
+		}
     </style>
 </head>
 <body>
     <form id="myForm">
 		<!-- TITLE ------------------------------------------------------------------------------------------------------------------------------------- -->
         <div class="section">
-            <h1>Picsoo API Demo Platform (staging) v1.01</h1>
+            <h1>Picsoo API Demo Platform (staging) v1.1.0</h1>
         </div>
 
 		<!-- GROUP #1 INPUT TEXT BOXES ----------------------------------------------------------------------------------------------------------------- -->
@@ -148,16 +156,8 @@
                     <input type="text" id="firstname" name="firstname" value="Patrick" placeholder="A firstname">
                 </div>
                 <div>
-                    <label for="vat">Customer VAT:</label>
+                    <label for="vat">VAT:</label>
                     <input type="text" id="vat" name="vat" value="666217180" placeholder="An european VAT">
-                </div>
-                <div>
-                    <label for="address">Customer address:</label>
-                    <input type="text" id="address" name="address" value="Avenue du Rois 10" placeholder="An address">
-                </div>
-                <div>
-                    <label for="customeremail">Customer email:</label>
-                    <input type="text" id="customeremail" name="customeremail" value="12345@test.com" placeholder="An email">
                 </div>
             </div>
 			<!-- chart of account ------------------------------------------------------------------------------------------------------------------->
@@ -206,8 +206,8 @@
                     <label for="GetAuthentificationCode">GetAuthentificationCode</label>
                 </div>
                 <div class="radio-label">
-                    <input type="radio" name="radioGroup" value="GeTClientsByAccountant" checked="checked" onclick="handleRadioSelection(this)">
-                    <label for="GeTClientsByAccountant">GeTClientsByAccountant</label>
+                    <input type="radio" name="radioGroup" value="GeTClientsByAccountant" onclick="handleRadioSelection(this)">
+                    <label for="GeTClientsByAccountant">GetClientsByAccountant</label>
                 </div>
                 <div class="radio-label">
                     <input type="radio" name="radioGroup" value="GetCompaniesListByEmail" onclick="handleRadioSelection(this)">
@@ -280,22 +280,31 @@
 			&nbsp;&nbsp;
             <a href="https://stagingbe.mindoo.co/">staging</a>
 			&nbsp;&nbsp;
-            <a href="http://picsoocloud.com/picsooapidoc/">api documentation</a>
+            <a href="http://picsooapi.com/picsooapidoc/">api documentation</a>
 			&nbsp;&nbsp;
             <a href="https://github.com/PicsooEU/API-PHP/">GitHub repositionary</a>
 			&nbsp;&nbsp;
+			<br><br>
+
+    		<div class="php-info">
+        		PHP VERSION: <?= PHP_VERSION ?><br>
+        		CURL: <?= function_exists('curl_init') ? 'YES' : 'NO' ?>
+    		</div>
         </div>
     </form>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script>
-        // Function to handle radio button selection
-        function handleRadioSelection(radioButton) {
-            //console.log("handleRadioSelection() " + radioButton.value);
+        // Function to handle radio button selection, appelé quand on clic sur un radio
+        function handleRadioSelection(radioButton) 
+        {
+            console.log("<DOMI> handleRadioSelection() " + radioButton.value);
         }
 
-        function handleOKButtonClick() {
-            //console.log("handleOKButtonClick()");
+        // appelé quand on clic sur le bouton 'EXECUTE SELECTED API'
+        function handleOKButtonClick() 
+        {
+            console.log("<DOMI> handleOKButtonClick()");
 
             // Retrieve the values of the fields
             var emailValue = document.getElementById("email").value;
@@ -306,8 +315,6 @@
 			var customernameValue = document.getElementById("name").value;
             var customerfirstnameValue = document.getElementById("firstname").value;
             var customervatValue = document.getElementById("vat").value;
-            var customeraddressValue = document.getElementById("address").value;
-            var customeremailValue = document.getElementById("customeremail").value;
 
 			var accountcodeValue = document.getElementById("accountcode").value;
 			var accountnameValue = document.getElementById("accountname").value;
@@ -333,8 +340,6 @@
 					customername: customernameValue,
 					customerfirstname: customerfirstnameValue,
 					customervat: customervatValue,
-					customeraddress: customeraddressValue,
-					customeremail: customeremailValue,
 
 					accountcode: accountcodeValue,
 					accountname: accountnameValue,
@@ -348,20 +353,22 @@
 				dataType: "json", // Expect JSON response
                 success: function(response) 
                 {
-					console.log("# " + response);
+					console.log("#1 " + response);
                     // Handle the success response if needed
-                    console.log("# " + response.message); // Access the response properties as needed
-                    console.log("# " + response.option); // Access the response properties as needed
-                    console.log("# " + response.data); // Access the response properties as needed
+                    console.log("#2 " + response.message); // Access the response properties as needed
+                    console.log("#3 " + response.option); // Access the response properties as needed
+                    console.log("#4 " + response.data); // Access the response properties as needed
 					if( response.option=='alert' )
 						alert("Result :\n" + response.data);
                 },
                 error: function(jqXHR, textStatus, errorThrown) 
                 {
                     // Handle the error if needed
-                    console.log("AJAX Error: ");
-                    console.log("# " + textStatus);
-                    console.log("# " + errorThrown);
+                    console.error("AJAX Error: ");     
+					console.error("#5 HTTP Status:", jqXHR.status);     
+					console.error("#6 Status Text:", textStatus);    
+ 					console.error("#7 Error:", errorThrown);     
+					console.error("#8 Server Response:", jqXHR.responseText);
                 }
             });
         }
