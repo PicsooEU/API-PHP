@@ -1,4 +1,19 @@
 <?php
+/*
+echo "<pre>";
+
+echo "SERVER: " . $_SERVER['SERVER_NAME'] . "\n";
+echo "DOCUMENT ROOT: " . $_SERVER['DOCUMENT_ROOT'] . "\n";
+echo "SCRIPT: " . __FILE__ . "\n";
+echo "PHP VERSION: " . PHP_VERSION . "\n";
+$dbg = function_exists('curl_init');
+echo "CURL: " . (function_exists('curl_init') ? 'YES' : 'NO') . "\n";
+
+echo "</pre>";
+
+exit;
+*/
+
 define('BASEPATH', __DIR__);
 include_once 'libraries/Picsoo_ws.php';
 $picsoo_ws = new Picsoo_ws();
@@ -18,8 +33,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST')
 	$customerfirstname = $_POST['customerfirstname'];
 	$customerfirstname = $_POST['customerfirstname'];
  	$customervat = $_POST['customervat'];
- 	$customeraddress = $_POST['customeraddress'];
- 	$customeremail = $_POST['customeremail'];
 
  	$accountcode = $_POST['accountcode'];
  	$accountname = $_POST['accountname'];
@@ -142,7 +155,8 @@ function CheckAccountCodeExistOrNot()
 
 function GetAuthentificationCode()
 {
-	// internal use only.	
+	$dbg = $picsoo_ws->AuthentificationCode;
+	echoresponse($picsoo_ws->CurrentAuthentificationCode());
 }
 
 function GetCustomerSupplierInfo( )
@@ -672,7 +686,7 @@ function SaveChartOfAccount()
 
 function SaveCustomerSupplier()
 {
-	global $clientid, $picsoo_ws, $companyname, $customerfirstname, $customername, $customervat, $customeraddress, $customeremail;
+	global $clientid, $picsoo_ws, $companyname, $customerfirstname, $customername, $customervat;
 
 	if( $customerfirstname=='' || $customername=='' )
 	{
@@ -696,16 +710,16 @@ function SaveCustomerSupplier()
         'Title' => '',
         'FirstName' => $customerfirstname,
         'LastName' => $customername,
-        'Email' => $customeremail,
+        'Email' => '12345@test.com',
         'PrimaryPhone' => '',
         'ContactType' => '',
-        'BillingAddressLine1' => $customeraddress,
+        'BillingAddressLine1' => '',
         'BillingAddressLine2' => '',
         'BillingCity' => '',
         'BillingState' => '',
         'BillingCountry' => '',
         'BillingCountry' => '',
-        'DeliveryAddressLine1' => $customeraddress,
+        'DeliveryAddressLine1' => '',
         'DeliveryAddressLine2' => '',
         'DeliveryCity' => '',
         'DeliveryState' => '',
